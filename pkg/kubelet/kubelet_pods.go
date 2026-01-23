@@ -649,7 +649,7 @@ func (kl *Kubelet) GenerateRunContainerOptions(ctx context.Context, pod *v1.Pod,
 	}
 	opts.Devices = append(opts.Devices, blkVolumes...)
 
-	envs, err := kl.makeEnvironmentVariables(logger, pod, container, podIP, podIPs, volumes)
+	envs, err := kl.makeEnvironmentVariables(ctx, pod, container, podIP, podIPs, volumes)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -731,7 +731,8 @@ func (kl *Kubelet) getServiceEnvVarMap(ns string, enableServiceLinks bool) (map[
 }
 
 // Make the environment variables for a pod in the given namespace.
-func (kl *Kubelet) makeEnvironmentVariables(logger klog.Logger, pod *v1.Pod, container *v1.Container, podIP string, podIPs []string, podVolumes kubecontainer.VolumeMap) ([]kubecontainer.EnvVar, error) {
+func (kl *Kubelet) makeEnvironmentVariables(ctx context.Context, pod *v1.Pod, container *v1.Container, podIP string, podIPs []string, podVolumes kubecontainer.VolumeMap) ([]kubecontainer.EnvVar, error) {
+	logger := klog.FromContext(ctx)
 	if pod.Spec.EnableServiceLinks == nil {
 		return nil, fmt.Errorf("nil pod.spec.enableServiceLinks encountered, cannot construct envvars")
 	}
@@ -851,12 +852,12 @@ func (kl *Kubelet) makeEnvironmentVariables(logger klog.Logger, pod *v1.Pod, con
 			// Step 1b: resolve alternate env var sources
 			switch {
 			case envVar.ValueFrom.FieldRef != nil:
-				runtimeVal, err = kl.podFieldSelectorRuntimeValue(envVar.ValueFrom.FieldRef, pod, podIP, podIPs)
+				runtimeVal, err = kl.podFieldSelectorRuntimeValue(ctx, envVar.ValueFrom.FieldRef, pod, podIP, podIPs)
 				if err != nil {
 					return result, err
 				}
 			case envVar.ValueFrom.ResourceFieldRef != nil:
-				defaultedPod, defaultedContainer, err := kl.defaultPodLimitsForDownwardAPI(pod, container)
+				defaultedPod, defaultedContainer, err := kl.defaultPodLimitsForDownwardAPI(ctx, pod, container)
 				if err != nil {
 					return result, err
 				}
@@ -982,7 +983,7 @@ func (kl *Kubelet) makeEnvironmentVariables(logger klog.Logger, pod *v1.Pod, con
 
 // podFieldSelectorRuntimeValue returns the runtime value of the given
 // selector for a pod.
-func (kl *Kubelet) podFieldSelectorRuntimeValue(fs *v1.ObjectFieldSelector, pod *v1.Pod, podIP string, podIPs []string) (string, error) {
+func (kl *Kubelet) podFieldSelectorRuntimeValue(ctx context.Context, fs *v1.ObjectFieldSelector, pod *v1.Pod, podIP string, podIPs []string) (string, error) {
 	internalFieldPath, _, err := podshelper.ConvertDownwardAPIFieldLabel(fs.APIVersion, fs.FieldPath, "")
 	if err != nil {
 		return "", err
@@ -1000,13 +1001,13 @@ func (kl *Kubelet) podFieldSelectorRuntimeValue(fs *v1.ObjectFieldSelector, pod 
 	case "spec.serviceAccountName":
 		return pod.Spec.ServiceAccountName, nil
 	case "status.hostIP":
-		hostIPs, err := kl.getHostIPsAnyWay()
+		hostIPs, err := kl.getHostIPsAnyWay(ctx)
 		if err != nil {
 			return "", err
 		}
 		return hostIPs[0].String(), nil
 	case "status.hostIPs":
-		hostIPs, err := kl.getHostIPsAnyWay()
+		hostIPs, err := kl.getHostIPsAnyWay(ctx)
 		if err != nil {
 			return "", err
 		}
@@ -1293,7 +1294,7 @@ func (kl *Kubelet) HandlePodCleanups(ctx context.Context) error {
 	// in the future (volumes, mount dirs, logs, and containers could all be
 	// better separated)
 	logger.V(3).Info("Clean up orphaned pod directories")
-	err = kl.cleanupOrphanedPodDirs(allPods, runningRuntimePods)
+	err = kl.cleanupOrphanedPodDirs(logger, allPods, runningRuntimePods)
 	if err != nil {
 		// We want all cleanup tasks to be run even if one of them failed. So
 		// we just log an error here and continue other cleanup tasks.
@@ -1991,7 +1992,7 @@ func (kl *Kubelet) generateAPIPodStatus(ctx context.Context, pod *v1.Pod, podSta
 	}
 	// set HostIP/HostIPs and initialize PodIP/PodIPs for host network pods
 	if kl.kubeClient != nil {
-		hostIPs, err := kl.getHostIPsAnyWay()
+		hostIPs, err := kl.getHostIPsAnyWay(ctx)
 		if err != nil {
 			logger.V(4).Info("Cannot get host IPs", "err", err)
 		} else {
@@ -2842,7 +2843,7 @@ func (kl *Kubelet) cleanupOrphanedPodCgroups(logger klog.Logger, pcm cm.PodConta
 		// so any memory backed volumes don't have their charges propagated to the
 		// parent croup.  If the volumes still exist, reduce the cpu shares for any
 		// process in the cgroup to the minimum value while we wait.
-		if podVolumesExist := kl.podVolumesExist(uid); podVolumesExist {
+		if podVolumesExist := kl.podVolumesExist(logger, uid); podVolumesExist {
 			logger.V(3).Info("Orphaned pod found, but volumes not yet removed.  Reducing cpu to minimum", "podUID", uid)
 			if err := pcm.ReduceCPULimits(logger, val); err != nil {
 				logger.Info("Failed to reduce cpu time for pod pending volume cleanup", "podUID", uid, "err", err)
