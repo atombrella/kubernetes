@@ -27,7 +27,7 @@ import (
 )
 
 func CheckQueueEq(lhs []string, rhs TimedQueue) bool {
-	for i := 0; i < len(lhs); i++ {
+	for i := range lhs {
 		if rhs[i].Value != lhs[i] {
 			return false
 		}

@@ -170,7 +170,7 @@ func newPodList(store cache.Store, count int, status v1.PodPhase, labelMap map[s
 	pods := []v1.Pod{}
 	var trueVar = true
 	controllerReference := metav1.OwnerReference{UID: rs.UID, APIVersion: "v1beta1", Kind: "ReplicaSet", Name: rs.Name, Controller: &trueVar}
-	for i := 0; i < count; i++ {
+	for i := range count {
 		pod := newPod(fmt.Sprintf("%s%d", name, i), rs, status, nil, false)
 		pod.ObjectMeta.Labels = labelMap
 		pod.OwnerReferences = []metav1.OwnerReference{controllerReference}
@@ -466,7 +466,7 @@ func BenchmarkGetReplicaSetsWithSameController(b *testing.B) {
 	relatedRS.Name = "rs2"
 	relatedRS.ObjectMeta.OwnerReferences[0].UID = "123456"
 	informers.Apps().V1().ReplicaSets().Informer().GetIndexer().Add(relatedRS)
-	for i := 0; i < 100; i++ {
+	for i := range 100 {
 		unrelatedRS := newReplicaSet(1, map[string]string{"foo": fmt.Sprintf("baz-%d", i)})
 		unrelatedRS.Name = fmt.Sprintf("rs-%d", i)
 		unrelatedRS.ObjectMeta.OwnerReferences[0].UID = types.UID(fmt.Sprintf("%d", i))
@@ -1359,7 +1359,7 @@ func shuffle(controllers []*apps.ReplicaSet) []*apps.ReplicaSet {
 	numControllers := len(controllers)
 	randIndexes := rand.Perm(numControllers)
 	shuffled := make([]*apps.ReplicaSet, numControllers)
-	for i := 0; i < numControllers; i++ {
+	for i := range numControllers {
 		shuffled[i] = controllers[randIndexes[i]]
 	}
 	return shuffled
@@ -2168,7 +2168,7 @@ func TestGetPodKeys(t *testing.T) {
 		if len(podKeys) != len(test.expectedPodKeys) {
 			t.Errorf("%s: unexpected keys for pods to delete, expected %v, got %v", test.name, test.expectedPodKeys, podKeys)
 		}
-		for i := 0; i < len(podKeys); i++ {
+		for i := range podKeys {
 			if podKeys[i] != test.expectedPodKeys[i] {
 				t.Errorf("%s: unexpected keys for pods to delete, expected %v, got %v", test.name, test.expectedPodKeys, podKeys)
 			}

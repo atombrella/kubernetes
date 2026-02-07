@@ -88,7 +88,7 @@ func (ccc *CSRCleanerController) Run(ctx context.Context, workers int) {
 		wg.Wait()
 	}()
 
-	for i := 0; i < workers; i++ {
+	for range workers {
 		wg.Go(func() {
 			wait.UntilWithContext(ctx, ccc.worker, pollingInterval)
 		})

@@ -265,7 +265,7 @@ func (jm *Controller) Run(ctx context.Context, workers int) {
 		return
 	}
 
-	for i := 0; i < workers; i++ {
+	for range workers {
 		wg.Go(func() {
 			wait.UntilWithContext(ctx, jm.worker, time.Second)
 		})
@@ -1826,7 +1826,7 @@ func (jm *Controller) manageJob(ctx context.Context, job *batch.Job, jobCtx *syn
 			if errorCount < len(errCh) && skippedPods > 0 {
 				logger.V(2).Info("Slow-start failure. Skipping creating pods, decrementing expectations", "skippedCount", skippedPods, "job", klog.KObj(job))
 				active -= skippedPods
-				for i := int32(0); i < skippedPods; i++ {
+				for range skippedPods {
 					// Decrement the expected number of creates because the informer won't observe this pod
 					jm.expectations.CreationObserved(logger, jobKey)
 				}

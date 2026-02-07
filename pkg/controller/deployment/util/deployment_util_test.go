@@ -1297,7 +1297,7 @@ func TestReplicasAnnotationsNeedUpdate(t *testing.T) {
 func TestGetDeploymentsForReplicaSet(t *testing.T) {
 	fakeInformerFactory := informers.NewSharedInformerFactory(&fake.Clientset{}, 0*time.Second)
 	var deployments []*apps.Deployment
-	for i := 0; i < 3; i++ {
+	for i := range 3 {
 		deployment := &apps.Deployment{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      fmt.Sprintf("deployment-%d", i),
@@ -1315,7 +1315,7 @@ func TestGetDeploymentsForReplicaSet(t *testing.T) {
 		fakeInformerFactory.Apps().V1().Deployments().Informer().GetStore().Add(deployment)
 	}
 	var rss []*apps.ReplicaSet
-	for i := 0; i < 5; i++ {
+	for i := range 5 {
 		rs := &apps.ReplicaSet{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: "test",

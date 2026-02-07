@@ -210,14 +210,14 @@ func newPod(podName string, nodeName string, label map[string]string, ds *apps.D
 }
 
 func addPods(podStore cache.Store, nodeName string, label map[string]string, ds *apps.DaemonSet, number int) {
-	for i := 0; i < number; i++ {
+	for range number {
 		pod := newPod(fmt.Sprintf("%s-", nodeName), nodeName, label, ds)
 		podStore.Add(pod)
 	}
 }
 
 func addFailedPods(podStore cache.Store, nodeName string, label map[string]string, ds *apps.DaemonSet, number int) {
-	for i := 0; i < number; i++ {
+	for range number {
 		pod := newPod(fmt.Sprintf("%s-", nodeName), nodeName, label, ds)
 		pod.Status = v1.PodStatus{Phase: v1.PodFailed}
 		podStore.Add(pod)
@@ -503,7 +503,7 @@ func TestExpectationsOnRecreate(t *testing.T) {
 
 	expectStableQueueLength := func(expected int) {
 		t.Helper()
-		for i := 0; i < 5; i++ {
+		for range 5 {
 			if actual := dsc.queue.Len(); actual != expected {
 				t.Fatalf("expected queue len to remain at %d, got %d", expected, actual)
 			}
@@ -2585,7 +2585,7 @@ func TestDeleteNoDaemonPod(t *testing.T) {
 			}(),
 			existPods: func() []*v1.Pod {
 				pods := []*v1.Pod{}
-				for i := 0; i < 4; i++ {
+				for i := range 4 {
 					podSpec := resourcePodSpec("node1", "50M", "50m")
 					pods = append(pods, &v1.Pod{
 						ObjectMeta: metav1.ObjectMeta{
@@ -2624,7 +2624,7 @@ func TestDeleteNoDaemonPod(t *testing.T) {
 			}(),
 			existPods: func() []*v1.Pod {
 				pods := []*v1.Pod{}
-				for i := 0; i < 4; i++ {
+				for i := range 4 {
 					podSpec := resourcePodSpec("node1", "50M", "50m")
 					pods = append(pods, &v1.Pod{
 						ObjectMeta: metav1.ObjectMeta{
@@ -2669,7 +2669,7 @@ func TestDeleteNoDaemonPod(t *testing.T) {
 			}(),
 			existPods: func() []*v1.Pod {
 				pods := []*v1.Pod{}
-				for i := 0; i < 4; i++ {
+				for i := range 4 {
 					podSpec := resourcePodSpec("node1", "50M", "50m")
 					pods = append(pods, &v1.Pod{
 						ObjectMeta: metav1.ObjectMeta{
@@ -3311,7 +3311,7 @@ func bumpResourceVersion(obj metav1.Object) {
 func getQueuedKeys(queue workqueue.TypedRateLimitingInterface[string]) []string {
 	var keys []string
 	count := queue.Len()
-	for i := 0; i < count; i++ {
+	for range count {
 		key, done := queue.Get()
 		if done {
 			return keys

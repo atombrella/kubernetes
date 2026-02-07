@@ -173,7 +173,7 @@ func expectActions(t *testing.T, actions []k8stesting.Action, num int, verb, res
 		t.Fatalf("len of actions %v is unexpected. Expected to be at least %v", len(actions), num+1)
 	}
 
-	for i := 0; i < num; i++ {
+	for i := range num {
 		relativePos := len(actions) - i - 1
 		assert.Equal(t, verb, actions[relativePos].GetVerb(), "Expected action -%d verb to be %s", i, verb)
 		assert.Equal(t, resource, actions[relativePos].GetResource().Resource, "Expected action -%d resource to be %s", i, resource)
@@ -2038,7 +2038,7 @@ func TestUpdateNode(t *testing.T) {
 // Test helpers
 func addPods(t *testing.T, esController *endpointSliceController, namespace string, podsCount int) {
 	t.Helper()
-	for i := 0; i < podsCount; i++ {
+	for i := range podsCount {
 		pod := newPod(i, namespace, true, 0, false)
 		esController.podStore.Add(pod)
 	}

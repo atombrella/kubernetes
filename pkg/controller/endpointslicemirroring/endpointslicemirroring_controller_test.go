@@ -472,7 +472,7 @@ func TestEndpointSlicesMirroredForService(t *testing.T) {
 
 func generateAddresses(num int) []v1.EndpointAddress {
 	addresses := make([]v1.EndpointAddress, num)
-	for i := 0; i < num; i++ {
+	for i := range num {
 		part1 := i / 255
 		part2 := i % 255
 		ip := fmt.Sprintf("10.0.%d.%d", part1, part2)

@@ -293,7 +293,7 @@ func (c *Controller) Run(ctx context.Context, workers int) {
 	}
 
 	logger.V(2).Info("Starting service queue worker threads", "total", workers)
-	for i := 0; i < workers; i++ {
+	for range workers {
 		wg.Go(func() {
 			wait.Until(func() { c.serviceQueueWorker(logger) }, c.workerLoopPeriod, ctx.Done())
 		})

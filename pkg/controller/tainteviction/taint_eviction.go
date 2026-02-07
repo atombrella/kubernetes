@@ -113,7 +113,7 @@ func deletePodHandler(c clientset.Interface, emitEventFunc func(types.Namespaced
 			emitEventFunc(args.Object.NamespacedName)
 		}
 		var err error
-		for i := 0; i < retries; i++ {
+		for range retries {
 			err = addConditionAndDeletePod(ctx, c, name, ns)
 			if err == nil {
 				metrics.PodDeletionsTotal.Inc()
@@ -302,7 +302,7 @@ func (tc *Controller) Run(ctx context.Context) {
 		return
 	}
 
-	for i := 0; i < UpdateWorkerSize; i++ {
+	for range UpdateWorkerSize {
 		tc.nodeUpdateChannels = append(tc.nodeUpdateChannels, make(chan nodeUpdateItem, NodeUpdateChannelSize))
 		tc.podUpdateChannels = append(tc.podUpdateChannels, make(chan podUpdateItem, podUpdateChannelSize))
 	}
@@ -346,7 +346,7 @@ func (tc *Controller) Run(ctx context.Context) {
 		}
 	})
 
-	for i := 0; i < UpdateWorkerSize; i++ {
+	for i := range UpdateWorkerSize {
 		wg.Go(func() {
 			tc.worker(ctx, i)
 		})

@@ -440,9 +440,9 @@ func (tc *replicaCalcTestCase) runTest(t *testing.T) {
 }
 func makePodMetricLevels(containerMetric ...int64) [][]int64 {
 	metrics := make([][]int64, len(containerMetric))
-	for i := 0; i < len(containerMetric); i++ {
+	for i := range containerMetric {
 		metrics[i] = make([]int64, numContainersPerPod)
-		for j := 0; j < numContainersPerPod; j++ {
+		for j := range numContainersPerPod {
 			metrics[i][j] = containerMetric[i]
 		}
 	}

@@ -111,12 +111,12 @@ func BenchmarkListControllerRevisions(b *testing.B) {
 			}
 
 			revisions := make([]runtime.Object, 0, s.totalRevisions)
-			for i := 0; i < ownedRevisions; i++ {
+			for i := range ownedRevisions {
 				revisions = append(revisions, createRevision(s.name, i, parent, parentKind))
 			}
 
 			// Create orphaned revisions (nil controller ref)
-			for i := 0; i < orphans; i++ {
+			for i := range orphans {
 				rev := createRevision(s.name, ownedRevisions+i, nil, schema.GroupVersionKind{})
 				// Make sure it has no owner ref or at least no controller ref
 				rev.OwnerReferences = nil
@@ -131,7 +131,7 @@ func BenchmarkListControllerRevisions(b *testing.B) {
 					UID:       types.UID("other-parent-uid"),
 				},
 			}
-			for i := 0; i < otherOwned; i++ {
+			for i := range otherOwned {
 				revisions = append(revisions, createRevision(s.name, ownedRevisions+orphans+i, otherParent, parentKind))
 			}
 

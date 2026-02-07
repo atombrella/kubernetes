@@ -65,7 +65,7 @@ func (c *Controller) Run(ctx context.Context, workers int) {
 		return
 	}
 
-	for i := 0; i < workers; i++ {
+	for range workers {
 		wg.Go(func() {
 			wait.UntilWithContext(ctx, c.runWorker, time.Second)
 		})

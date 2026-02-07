@@ -459,7 +459,7 @@ func (dc *DeploymentController) cleanupDeployment(ctx context.Context, oldRSs []
 	sort.Sort(deploymentutil.ReplicaSetsByRevision(cleanableRSes))
 	logger.V(4).Info("Looking to cleanup old replica sets for deployment", "deployment", klog.KObj(deployment))
 
-	for i := int32(0); i < diff; i++ {
+	for i := range diff {
 		rs := cleanableRSes[i]
 		// Avoid delete replica set with non-zero replica counts
 		if rs.Status.Replicas != 0 || *(rs.Spec.Replicas) != 0 || rs.Generation > rs.Status.ObservedGeneration || rs.DeletionTimestamp != nil {

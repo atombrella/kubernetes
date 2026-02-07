@@ -451,7 +451,7 @@ func TestUnavailable(t *testing.T) {
 
 	// Add three pods, verifying that the counts go up at each step.
 	pods := []*v1.Pod{}
-	for i := int32(0); i < 4; i++ {
+	for i := range int32(4) {
 		ps.VerifyPdbStatus(t, pdbName, 0, i, 3, i, map[string]metav1.Time{})
 		pod, _ := newPod(t, fmt.Sprintf("yo-yo-yo %d", i))
 		pods = append(pods, pod)
@@ -797,7 +797,7 @@ func TestMultipleControllers(t *testing.T) {
 	add(t, dc.pdbStore, pdb)
 
 	pods := []*v1.Pod{}
-	for i := 0; i < podCount; i++ {
+	for i := range podCount {
 		pod, _ := newPod(t, fmt.Sprintf("pod %d", i))
 		pods = append(pods, pod)
 		add(t, dc.podStore, pod)
@@ -809,7 +809,7 @@ func TestMultipleControllers(t *testing.T) {
 
 	rc, _ := newReplicationController(t, 1)
 	rc.Name = "rc 1"
-	for i := 0; i < podCount; i++ {
+	for i := range podCount {
 		updatePodOwnerToRc(t, pods[i], rc)
 	}
 	add(t, dc.rcStore, rc)
@@ -819,7 +819,7 @@ func TestMultipleControllers(t *testing.T) {
 
 	rc, _ = newReplicationController(t, 1)
 	rc.Name = "rc 2"
-	for i := 0; i < podCount; i++ {
+	for i := range podCount {
 		updatePodOwnerToRc(t, pods[i], rc)
 	}
 	add(t, dc.rcStore, rc)
@@ -854,7 +854,7 @@ func TestReplicationController(t *testing.T) {
 	// about the RC.  This is a known bug.  TODO(mml): file issue
 	ps.VerifyPdbStatus(t, pdbName, 0, 0, 0, 0, map[string]metav1.Time{})
 
-	for i := int32(0); i < 3; i++ {
+	for i := range int32(3) {
 		pod, _ := newPod(t, fmt.Sprintf("foobar %d", i))
 		updatePodOwnerToRc(t, pod, rc)
 		pod.Labels = labels
@@ -893,7 +893,7 @@ func TestStatefulSetController(t *testing.T) {
 	// about the SS.  This is a known bug.  TODO(mml): file issue
 	ps.VerifyPdbStatus(t, pdbName, 0, 0, 0, 0, map[string]metav1.Time{})
 
-	for i := int32(0); i < 3; i++ {
+	for i := range int32(3) {
 		pod, _ := newPod(t, fmt.Sprintf("foobar %d", i))
 		updatePodOwnerToSs(t, pod, ss)
 		pod.Labels = labels

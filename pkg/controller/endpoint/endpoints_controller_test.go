@@ -86,7 +86,7 @@ func testPod(namespace string, id int, nPorts int, isReady bool, ipFamilies []v1
 	if !isReady {
 		p.Status.Conditions[0].Status = v1.ConditionFalse
 	}
-	for j := 0; j < nPorts; j++ {
+	for j := range nPorts {
 		p.Spec.Containers[0].Ports = append(p.Spec.Containers[0].Ports,
 			v1.ContainerPort{Name: fmt.Sprintf("port%d", j), ContainerPort: int32(8080 + j)})
 	}
@@ -123,7 +123,7 @@ func addBadIPPod(store cache.Store, namespace string, ipFamilies []v1.IPFamily) 
 }
 
 func addNotReadyPodsWithSpecifiedRestartPolicyAndPhase(store cache.Store, namespace string, nPods int, nPorts int, restartPolicy v1.RestartPolicy, podPhase v1.PodPhase) {
-	for i := 0; i < nPods; i++ {
+	for i := range nPods {
 		p := &v1.Pod{
 			TypeMeta: metav1.TypeMeta{APIVersion: "v1"},
 			ObjectMeta: metav1.ObjectMeta{
@@ -146,7 +146,7 @@ func addNotReadyPodsWithSpecifiedRestartPolicyAndPhase(store cache.Store, namesp
 				},
 			},
 		}
-		for j := 0; j < nPorts; j++ {
+		for j := range nPorts {
 			p.Spec.Containers[0].Ports = append(p.Spec.Containers[0].Ports,
 				v1.ContainerPort{Name: fmt.Sprintf("port%d", j), ContainerPort: int32(8080 + j)})
 		}
@@ -2468,12 +2468,12 @@ func TestTruncateEndpoints(t *testing.T) {
 			var subsets []v1.EndpointSubset
 			for subsetIndex, numReady := range tc.subsetsReady {
 				subset := v1.EndpointSubset{}
-				for i := 0; i < numReady; i++ {
+				for range numReady {
 					subset.Addresses = append(subset.Addresses, v1.EndpointAddress{})
 				}
 
 				numNotReady := tc.subsetsNotReady[subsetIndex]
-				for i := 0; i < numNotReady; i++ {
+				for range numNotReady {
 					subset.NotReadyAddresses = append(subset.NotReadyAddresses, v1.EndpointAddress{})
 				}
 				subsets = append(subsets, subset)

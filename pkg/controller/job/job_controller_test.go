@@ -156,7 +156,7 @@ func newPod(name string, job *batch.Job) *v1.Pod {
 // create count pods with the given phase for the given job
 func newPodList(count int, status v1.PodPhase, job *batch.Job) []*v1.Pod {
 	var pods []*v1.Pod
-	for i := 0; i < count; i++ {
+	for range count {
 		newPod := newPod(fmt.Sprintf("pod-%v", rand.String(10)), job)
 		newPod.Status = v1.PodStatus{Phase: status}
 		newPod.Status.ContainerStatuses = []v1.ContainerStatus{

@@ -106,7 +106,7 @@ var podSpec = `
 func TestPodTemplateSpecHash(t *testing.T) {
 	seenHashes := make(map[string]int)
 
-	for i := 0; i < 1000; i++ {
+	for i := range 1000 {
 		specJSON := strings.Replace(podSpec, "@@VERSION@@", strconv.Itoa(i), 1)
 		spec := v1.PodTemplateSpec{}
 		json.Unmarshal([]byte(specJSON), &spec)

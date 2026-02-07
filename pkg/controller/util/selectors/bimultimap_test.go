@@ -365,7 +365,7 @@ func indexPermutations(size int) [][]int {
 		return
 	}
 	var remaining []int
-	for i := 0; i < size; i++ {
+	for i := range size {
 		remaining = append(remaining, i)
 	}
 	return permute(nil, remaining)
@@ -473,7 +473,7 @@ func randomOperations(times int) operation {
 		}
 	}
 	return func(m *BiMultimap) {
-		for i := 0; i < times; i++ {
+		for range times {
 			randomOp(m)
 		}
 	}

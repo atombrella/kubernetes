@@ -153,7 +153,7 @@ func (jm *ControllerV2) Run(ctx context.Context, workers int) {
 		return
 	}
 
-	for i := 0; i < workers; i++ {
+	for range workers {
 		wg.Go(func() {
 			wait.UntilWithContext(ctx, jm.worker, time.Second)
 		})
@@ -735,7 +735,7 @@ func (jm *ControllerV2) removeOldestJobs(ctx context.Context, cj *batchv1.CronJo
 	logger.V(4).Info("Cleaning up jobs from CronJob list", "deletejobnum", numToDelete, "jobnum", len(js), "cronjob", klog.KObj(cj))
 
 	sort.Sort(byJobStartTime(js))
-	for i := 0; i < numToDelete; i++ {
+	for i := range numToDelete {
 		logger.V(4).Info("Removing job from CronJob list", "job", js[i].Name, "cronjob", klog.KObj(cj))
 		if deleteJob(logger, cj, js[i], jm.jobControl, jm.recorder) {
 			updateStatus = true

@@ -776,7 +776,7 @@ func TestUpdateClaimOwnerRefForSetAndPod(t *testing.T) {
 		},
 	}
 	for _, tc := range testCases {
-		for variations := 0; variations < 8; variations++ {
+		for variations := range 8 {
 			hasPodRef := (variations & 1) != 0
 			hasSetRef := (variations & 2) != 0
 			extraOwner := (variations & 3) != 0

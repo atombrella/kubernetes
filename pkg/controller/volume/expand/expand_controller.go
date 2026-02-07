@@ -338,7 +338,7 @@ func (expc *expandController) Run(ctx context.Context) {
 		return
 	}
 
-	for i := 0; i < defaultWorkerCount; i++ {
+	for range defaultWorkerCount {
 		wg.Go(func() {
 			wait.UntilWithContext(ctx, expc.runWorker, time.Second)
 		})

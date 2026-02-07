@@ -238,7 +238,7 @@ func (c *Controller) Run(ctx context.Context, workers int) {
 
 	logger.V(2).Info("Starting worker threads", "total", workers)
 
-	for i := 0; i < workers; i++ {
+	for range workers {
 		wg.Go(func() {
 			wait.UntilWithContext(ctx, c.worker, c.workerLoopPeriod)
 		})

@@ -260,7 +260,7 @@ func TestCleanerWithApprovedExpiredCSR(t *testing.T) {
 			if len(actions) != len(tc.expectedActions) {
 				t.Fatalf("got %d actions, wanted %d actions", len(actions), len(tc.expectedActions))
 			}
-			for i := 0; i < len(actions); i++ {
+			for i := range actions {
 				if a := actions[i]; !a.Matches(tc.expectedActions[i], "certificatesigningrequests") {
 					t.Errorf("got action %#v, wanted %v", a, tc.expectedActions[i])
 				}

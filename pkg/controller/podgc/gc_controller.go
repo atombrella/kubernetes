@@ -175,7 +175,7 @@ func (gcc *PodGCController) gcTerminating(ctx context.Context, pods []*v1.Pod) {
 	// sort only when necessary
 	sort.Sort(byEvictionAndCreationTimestamp(terminatingPods))
 	var wait sync.WaitGroup
-	for i := 0; i < deleteCount; i++ {
+	for i := range deleteCount {
 		wait.Add(1)
 		go func(pod *v1.Pod) {
 			defer wait.Done()
@@ -210,7 +210,7 @@ func (gcc *PodGCController) gcTerminated(ctx context.Context, pods []*v1.Pod) {
 	// sort only when necessary
 	sort.Sort(byEvictionAndCreationTimestamp(terminatedPods))
 	var wait sync.WaitGroup
-	for i := 0; i < deleteCount; i++ {
+	for i := range deleteCount {
 		wait.Add(1)
 		go func(pod *v1.Pod) {
 			defer wait.Done()

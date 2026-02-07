@@ -5218,7 +5218,7 @@ func TestMultipleHPAs(t *testing.T) {
 	var cpuTarget int32 = 10
 
 	// generate resources (HPAs, Scales, Pods...)
-	for i := 0; i < hpaCount; i++ {
+	for i := range hpaCount {
 		hpaName := fmt.Sprintf("dummy-hpa-%v", i)
 		deploymentName := fmt.Sprintf("dummy-target-%v", i)
 		labelSet := map[string]string{"name": deploymentName}

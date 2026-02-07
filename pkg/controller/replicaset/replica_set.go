@@ -251,7 +251,7 @@ func (rsc *ReplicaSetController) Run(ctx context.Context, workers int) {
 		return
 	}
 
-	for i := 0; i < workers; i++ {
+	for range workers {
 		wg.Go(func() {
 			wait.UntilWithContext(ctx, rsc.worker, time.Second)
 		})
@@ -643,7 +643,7 @@ func (rsc *ReplicaSetController) manageReplicas(ctx context.Context, activePods 
 		// retry the slow start process.
 		if skippedPods := diff - successfulCreations; skippedPods > 0 {
 			logger.V(2).Info("Slow-start failure. Skipping creation of pods, decrementing expectations", "podsSkipped", skippedPods, "kind", rsc.Kind, "replicaSet", klog.KObj(rs))
-			for i := 0; i < skippedPods; i++ {
+			for range skippedPods {
 				// Decrement the expected number of creates because the informer won't observe this pod
 				rsc.expectations.CreationObserved(logger, rsKey)
 			}

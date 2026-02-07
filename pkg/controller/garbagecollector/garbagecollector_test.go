@@ -351,7 +351,7 @@ func verifyGraphInvariants(scenario string, uidToNode map[types.UID]*node, t *te
 
 func createEvent(eventType eventType, selfUID string, owners []string) event {
 	var ownerReferences []metav1.OwnerReference
-	for i := 0; i < len(owners); i++ {
+	for i := range owners {
 		ownerReferences = append(ownerReferences, metav1.OwnerReference{UID: types.UID(owners[i])})
 	}
 	return event{
@@ -461,7 +461,7 @@ func TestDependentsRace(t *testing.T) {
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
-		for i := 0; i < updates; i++ {
+		for range updates {
 			dependent := &node{}
 			gc.dependencyGraphBuilder.addDependentToOwners(logger, dependent, []metav1.OwnerReference{{UID: ownerUID}})
 			gc.dependencyGraphBuilder.removeDependentFromOwners(dependent, []metav1.OwnerReference{{UID: ownerUID}})
@@ -469,7 +469,7 @@ func TestDependentsRace(t *testing.T) {
 	}()
 	go func() {
 		defer wg.Done()
-		for i := 0; i < updates; i++ {
+		for range updates {
 			gc.attemptToOrphan.Add(owner)
 			gc.processAttemptToOrphanWorker(logger)
 		}
@@ -2659,7 +2659,7 @@ func processPendingGraphChanges(count int) step {
 					ctx.gc.dependencyGraphBuilder.processGraphChanges(ctx.logger)
 				}
 			} else {
-				for i := 0; i < count; i++ {
+				for i := range count {
 					if ctx.gc.dependencyGraphBuilder.graphChanges.Len() == 0 {
 						ctx.t.Errorf("expected at least %d pending changes, got %d", count, i+1)
 						return
@@ -2694,7 +2694,7 @@ func processAttemptToDelete(count int) step {
 					ctx.gc.processAttemptToDeleteWorker(context.TODO())
 				}
 			} else {
-				for i := 0; i < count; i++ {
+				for i := range count {
 					if ctx.gc.dependencyGraphBuilder.attemptToDelete.Len() == 0 {
 						ctx.t.Errorf("expected at least %d pending changes, got %d", count, i+1)
 						return

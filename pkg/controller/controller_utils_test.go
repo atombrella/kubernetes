@@ -115,7 +115,7 @@ func newReplicationController(replicas int) *v1.ReplicationController {
 // create count pods with the given phase for the given rc (same selectors and namespace), and add them to the store.
 func newPodList(store cache.Store, count int, status v1.PodPhase, rc *v1.ReplicationController) *v1.PodList {
 	pods := []v1.Pod{}
-	for i := 0; i < count; i++ {
+	for i := range count {
 		newPod := v1.Pod{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      fmt.Sprintf("pod%d", i),
@@ -724,10 +724,10 @@ func TestSortingActivePods(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			numPods := len(test.pods)
 
-			for i := 0; i < 20; i++ {
+			for range 20 {
 				idx := rand.Perm(numPods)
 				randomizedPods := make([]*v1.Pod, numPods)
-				for j := 0; j < numPods; j++ {
+				for j := range numPods {
 					randomizedPods[j] = &test.pods[idx[j]]
 				}
 

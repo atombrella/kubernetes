@@ -233,7 +233,7 @@ func TestCIDRSet_RandomishAllocation(t *testing.T) {
 		// allocate all the CIDRs
 		var cidrs []*net.IPNet
 
-		for i := 0; i < 256; i++ {
+		for range 256 {
 			if c, err := a.AllocateNext(); err == nil {
 				cidrs = append(cidrs, c)
 			} else {
@@ -253,7 +253,7 @@ func TestCIDRSet_RandomishAllocation(t *testing.T) {
 
 		// allocate the CIDRs again
 		var rcidrs []*net.IPNet
-		for i := 0; i < 256; i++ {
+		for i := range 256 {
 			if c, err := a.AllocateNext(); err == nil {
 				rcidrs = append(rcidrs, c)
 			} else {
@@ -295,7 +295,7 @@ func TestCIDRSet_AllocationOccupied(t *testing.T) {
 		var cidrs []*net.IPNet
 		var numCIDRs = 256
 
-		for i := 0; i < numCIDRs; i++ {
+		for range numCIDRs {
 			if c, err := a.AllocateNext(); err == nil {
 				cidrs = append(cidrs, c)
 			} else {
@@ -422,7 +422,7 @@ func TestDoubleOccupyRelease(t *testing.T) {
 	}
 
 	// Make sure that we can allocate exactly `numAllocatable24s` elements.
-	for i := 0; i < numAllocatable24s; i++ {
+	for i := range numAllocatable24s {
 		_, err := a.AllocateNext()
 		if err != nil {
 			t.Fatalf("Expected to be able to allocate %d CIDRS, failed after %d", numAllocatable24s, i)

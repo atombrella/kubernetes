@@ -343,7 +343,7 @@ func TestDaemonSetUpdatesSaveOldHealthyPods(t *testing.T) {
 		}
 	}
 
-	for i := 0; i < 10; i++ {
+	for i := range 10 {
 		maxUnavailable := rand.Intn(10)
 		t.Logf("%d iteration, maxUnavailable=%d", i+1, maxUnavailable)
 		intStr = intstr.FromInt(maxUnavailable)
@@ -445,7 +445,7 @@ func TestDaemonSetUpdatesAllOldNotReadyPodsAndNewNotReadyPods(t *testing.T) {
 		t.Fatal(err)
 	}
 	// we need to iterate 10 times, since we allow 10 max unavailable, to reach 100 nodes rollout
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		clearExpectations(t, manager, ds, podControl)
 		expectSyncDaemonSets(t, manager, ds, podControl, 0, maxUnavailable, 0)
 

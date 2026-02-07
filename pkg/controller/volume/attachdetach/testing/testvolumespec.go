@@ -68,7 +68,7 @@ func CreateTestClient(logger klog.Logger) *fake.Clientset {
 		obj := &v1.PodList{}
 		podNamePrefix := "mypod"
 		namespace := "mynamespace"
-		for i := 0; i < 5; i++ {
+		for i := range 5 {
 			podName := fmt.Sprintf("%s-%d", podNamePrefix, i)
 			pod := v1.Pod{
 				Status: v1.PodStatus{
@@ -125,7 +125,7 @@ func CreateTestClient(logger klog.Logger) *fake.Clientset {
 	})
 	nodes = &v1.NodeList{}
 	nodeNamePrefix := "mynode"
-	for i := 0; i < 5; i++ {
+	for i := range 5 {
 		var nodeName string
 		if i != 0 {
 			nodeName = fmt.Sprintf("%s-%d", nodeNamePrefix, i)

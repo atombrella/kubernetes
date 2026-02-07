@@ -161,7 +161,7 @@ func largeClusterClient(t testing.TB, numNodes int) *fake.Clientset {
 	fakeKubeClient := fake.NewSimpleClientset()
 
 	// populate numNodes nodes, each with 100 volumes
-	for i := 0; i < numNodes; i++ {
+	for i := range numNodes {
 		nodeName := fmt.Sprintf("node-%d", i)
 		node := &v1.Node{
 			ObjectMeta: metav1.ObjectMeta{
@@ -174,7 +174,7 @@ func largeClusterClient(t testing.TB, numNodes int) *fake.Clientset {
 				},
 			},
 		}
-		for j := 0; j < 100; j++ {
+		for j := range 100 {
 			volumeName := v1.UniqueVolumeName(fmt.Sprintf("test-volume/vol-%d-%d", i, j))
 			node.Status.VolumesAttached = append(node.Status.VolumesAttached, v1.AttachedVolume{
 				Name:       volumeName,

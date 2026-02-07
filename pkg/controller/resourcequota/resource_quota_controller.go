@@ -315,7 +315,7 @@ func (rq *Controller) Run(ctx context.Context, workers int) {
 	}
 
 	// the workers that chug through the quota calculation backlog
-	for i := 0; i < workers; i++ {
+	for range workers {
 		wg.Go(func() {
 			wait.UntilWithContext(ctx, rq.worker(rq.queue), time.Second)
 		})

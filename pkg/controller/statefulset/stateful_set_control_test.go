@@ -1952,7 +1952,7 @@ func TestStatefulSetControlLimitsHistory(t *testing.T) {
 		if err != nil {
 			t.Fatalf("%s: %s", test.name, err)
 		}
-		for i := 0; i < 10; i++ {
+		for i := range 10 {
 			set.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("foo-%d", i)
 			if err := updateStatefulSetControl(set, ssc, om, assertUpdateInvariants); err != nil {
 				t.Fatalf("%s: %s", test.name, err)
@@ -2765,7 +2765,7 @@ func assertMonotonicInvariants(set *apps.StatefulSet, om *fakeObjectManager) err
 		return err
 	}
 	sort.Sort(ascendingOrdinal(pods))
-	for idx := 0; idx < len(pods); idx++ {
+	for idx := range pods {
 		if idx > 0 && isRunningAndReady(pods[idx]) && !isRunningAndReady(pods[idx-1]) {
 			return fmt.Errorf("successor %s is Running and Ready while %s is not", pods[idx].Name, pods[idx-1].Name)
 		}
@@ -3427,7 +3427,7 @@ func TestStatefulSetRollingUpdateRespectsMinReadySeconds(t *testing.T) {
 	set, _ = om.setsLister.StatefulSets(set.Namespace).Get(set.Name)
 
 	// Manually create pods that are running and ready
-	for i := 0; i < 2; i++ {
+	for i := range 2 {
 		pod := newStatefulSetPod(set, i)
 		pod.Status.Phase = v1.PodRunning
 		pod.Status.Conditions = []v1.PodCondition{
@@ -3464,7 +3464,7 @@ func TestStatefulSetRollingUpdateRespectsMinReadySeconds(t *testing.T) {
 	}
 
 	// Now set pods as ready for longer than MinReadySeconds
-	for i := 0; i < 2; i++ {
+	for i := range 2 {
 		pod := newStatefulSetPod(set, i)
 		pod.Status.Phase = v1.PodRunning
 		pod.Status.Conditions = []v1.PodCondition{
@@ -3506,7 +3506,7 @@ func TestStatefulSetScaleDownRespectsMinReadySeconds(t *testing.T) {
 	}
 
 	// Create pods that are running and ready but not for long enough
-	for i := 0; i < 3; i++ {
+	for i := range 3 {
 		pod := newStatefulSetPod(set, i)
 		pod.Status.Phase = v1.PodRunning
 		pod.Status.Conditions = []v1.PodCondition{
@@ -3569,7 +3569,7 @@ func TestStatefulSetOnDeleteStrategyIgnoresMinReadySeconds(t *testing.T) {
 	}
 
 	// Create pods that are ready but not for long enough for MinReadySeconds
-	for i := 0; i < 2; i++ {
+	for i := range 2 {
 		pod := newStatefulSetPod(set, i)
 		pod.Status.Phase = v1.PodRunning
 		pod.Status.Conditions = []v1.PodCondition{
@@ -3623,7 +3623,7 @@ func TestStatefulSetZeroMinReadySeconds(t *testing.T) {
 	om, _, ssc := setupController(client)
 
 	// Create pods that are running and ready (even just now)
-	for i := 0; i < 2; i++ {
+	for i := range 2 {
 		pod := newStatefulSetPod(set, i)
 		pod.Status.Phase = v1.PodRunning
 		pod.Status.Conditions = []v1.PodCondition{
@@ -3670,7 +3670,7 @@ func TestStatefulSetPartitionRollingUpdateWithMinReadySeconds(t *testing.T) {
 	om, _, ssc := setupController(client)
 
 	// Create pods that are ready but not for long enough
-	for i := 0; i < 4; i++ {
+	for i := range 4 {
 		pod := newStatefulSetPod(set, i)
 		pod.Status.Phase = v1.PodRunning
 		pod.Status.Conditions = []v1.PodCondition{

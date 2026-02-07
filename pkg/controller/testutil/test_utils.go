@@ -512,7 +512,7 @@ func NewPod(name, host string) *v1.Pod {
 }
 
 func contains(node *v1.Node, nodes []*v1.Node) bool {
-	for i := 0; i < len(nodes); i++ {
+	for i := range nodes {
 		if node.Name == nodes[i].Name {
 			return true
 		}

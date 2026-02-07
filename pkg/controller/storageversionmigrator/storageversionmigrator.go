@@ -152,7 +152,7 @@ func (svmc *SVMController) Run(ctx context.Context) {
 		return
 	}
 
-	for i := 0; i < workers; i++ {
+	for range workers {
 		wg.Go(func() {
 			wait.UntilWithContext(ctx, svmc.worker, time.Second)
 		})

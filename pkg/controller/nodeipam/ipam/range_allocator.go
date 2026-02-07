@@ -191,7 +191,7 @@ func (r *rangeAllocator) Run(ctx context.Context) {
 		return
 	}
 
-	for i := 0; i < cidrUpdateWorkers; i++ {
+	for range cidrUpdateWorkers {
 		wg.Go(func() {
 			wait.UntilWithContext(ctx, r.runWorker, time.Second)
 		})
@@ -428,7 +428,7 @@ func (r *rangeAllocator) updateCIDRsAllocation(ctx context.Context, nodeName str
 	}
 
 	// If we reached here, it means that the node has no CIDR currently assigned. So we set it.
-	for i := 0; i < cidrUpdateRetries; i++ {
+	for range cidrUpdateRetries {
 		if err = nodeutil.PatchNodeCIDRs(ctx, r.client, types.NodeName(node.Name), cidrsString); err == nil {
 			logger.Info("Set node PodCIDR", "node", klog.KObj(node), "podCIDRs", cidrsString)
 			return nil

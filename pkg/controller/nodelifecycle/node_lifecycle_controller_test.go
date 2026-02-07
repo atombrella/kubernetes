@@ -1990,7 +1990,7 @@ func TestMonitorNodeHealthMarkPodsNotReadyWithWorkerSize(t *testing.T) {
 		nodes := make([]*v1.Node, numNodes)
 		// Node created long time ago, with status updated by kubelet exceeds grace period.
 		// Expect pods status updated and Unknown node status posted from node controller
-		for i := 0; i < numNodes; i++ {
+		for i := range numNodes {
 			nodes[i] = &v1.Node{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:              fmt.Sprintf("node%d", i),
@@ -2017,7 +2017,7 @@ func TestMonitorNodeHealthMarkPodsNotReadyWithWorkerSize(t *testing.T) {
 	}
 	makePods := func() []v1.Pod {
 		pods := make([]v1.Pod, numNodes*podsPerNode)
-		for i := 0; i < numNodes*podsPerNode; i++ {
+		for i := range numNodes * podsPerNode {
 			pods[i] = *testutil.NewPod(fmt.Sprintf("pod%d", i), fmt.Sprintf("node%d", i%numNodes))
 		}
 		return pods

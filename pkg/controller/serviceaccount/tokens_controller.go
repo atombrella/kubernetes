@@ -180,7 +180,7 @@ func (e *TokensController) Run(ctx context.Context, workers int) {
 	}
 
 	logger.V(5).Info("Starting workers")
-	for i := 0; i < workers; i++ {
+	for range workers {
 		wg.Go(func() {
 			wait.UntilWithContext(ctx, e.syncServiceAccount, 0)
 		})

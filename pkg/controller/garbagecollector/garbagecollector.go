@@ -169,7 +169,7 @@ func (gc *GarbageCollector) Run(ctx context.Context, workers int, initialSyncTim
 	logger.Info("Proceeding to collect garbage")
 
 	// gc workers
-	for i := 0; i < workers; i++ {
+	for range workers {
 		wg.Go(func() {
 			wait.UntilWithContext(ctx, gc.runAttemptToDeleteWorker, 1*time.Second)
 		})

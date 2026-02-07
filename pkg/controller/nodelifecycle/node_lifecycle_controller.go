@@ -480,7 +480,7 @@ func (nc *Controller) Run(ctx context.Context) {
 	}
 
 	// Start workers to reconcile labels and/or update NoSchedule taint for nodes.
-	for i := 0; i < nodeUpdateWorkerSize; i++ {
+	for range nodeUpdateWorkerSize {
 		// Thanks to "workqueue", each worker just need to get item from queue, because
 		// the item is flagged when got from queue: if new event come, the new item will
 		// be re-queued until "Done", so no more than one worker handle the same item and
@@ -490,7 +490,7 @@ func (nc *Controller) Run(ctx context.Context) {
 		})
 	}
 
-	for i := 0; i < podUpdateWorkerSize; i++ {
+	for range podUpdateWorkerSize {
 		wg.Go(func() {
 			wait.UntilWithContext(ctx, nc.doPodProcessingWorker, time.Second)
 		})
